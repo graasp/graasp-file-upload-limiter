@@ -1,9 +1,15 @@
 import { FastifyPluginAsync } from "fastify";
-import { Actor, Item, Member, PostHookHandlerType, PreHookHandlerType, UnknownExtra } from "graasp";
+import { Item, Member, PostHookHandlerType, PreHookHandlerType } from "graasp";
 
-interface GraaspS3FileItemOptions {
+const DEFAULT_MAX_STORAGE = 1024 * 1024 * 100; // 100MB;
+
+interface GraaspFileUploadLimiterOptions {
+  /** Item type to target (ex: 'file', 's3File') */
   type: string;
+  /** Chain of property names to the file size (ex: 'extra.s3File.size')  */
   sizePath: string;
+  /** Maximum storage size for a user in bytes (default to 100MB)  */
+  maxMemberStorage?: number;
 }
 
 type MemberExtra = {
@@ -12,8 +18,6 @@ type MemberExtra = {
   };
 };
 
-const DEFAULT_MAX_STORAGE = 1024 * 1024 * 1024 * 15; // 15GB;
-
 class StorageExceeded extends Error {
   message = "The allowed storage is full";
   name = "StorageExceededError";
@@ -21,14 +25,14 @@ class StorageExceeded extends Error {
   code = 507;
 }
 
-const plugin: FastifyPluginAsync<GraaspS3FileItemOptions> = async (fastify, options) => {
+const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastify, options) => {
   const {
     items: { taskManager },
-    members: { taskManager: mTaskManager, dbService: mDbService },
+    members: { taskManager: mTaskManager },
     taskRunner: runner,
     log,
   } = fastify;
-  const { type: itemType, sizePath } = options;
+  const { type: itemType, sizePath, maxMemberStorage = DEFAULT_MAX_STORAGE } = options;
 
   if (!itemType || !sizePath) {
     throw new Error("graasp-file-upload-limiter: missing plugin options");
@@ -36,7 +40,7 @@ const plugin: FastifyPluginAsync<GraaspS3FileItemOptions> = async (fastify, opti
 
   const getMemberStorageFromExtra = (extra: MemberExtra) => extra?.storage?.total || 0;
 
-  const getFileSize = (item: Partial<Item<UnknownExtra>>): number => {
+  const getFileSize = (item): number => {
     const properties = sizePath.split(".");
     const sizeField = properties.reduce((prev, curr) => prev?.[curr], item);
 
@@ -48,7 +52,7 @@ const plugin: FastifyPluginAsync<GraaspS3FileItemOptions> = async (fastify, opti
   };
 
   // increase the actor storage by the given item size
-  const increaseStorage: PostHookHandlerType<Item<UnknownExtra>> = async (item, actor) => {
+  const increaseStorage: PostHookHandlerType<Item> = async (item, actor) => {
     const { type } = item;
 
     // enabled only on given item type
@@ -68,7 +72,7 @@ const plugin: FastifyPluginAsync<GraaspS3FileItemOptions> = async (fastify, opti
   };
 
   // decrease the actor storage by the given item size
-  const decreaseStorage: PostHookHandlerType<Item<UnknownExtra>> = async (item, actor) => {
+  const decreaseStorage: PostHookHandlerType<Item> = async (item, actor) => {
     const { type } = item;
 
     // enabled only on given item type
@@ -90,7 +94,7 @@ const plugin: FastifyPluginAsync<GraaspS3FileItemOptions> = async (fastify, opti
   // check the user has enough storage to create a new item given its size
   // the item might not contain a size,
   // in this case this function will throw an error only when the storage is exceeded
-  const checkRemainingStorage: PreHookHandlerType<Item<UnknownExtra>> = async (item, actor) => {
+  const checkRemainingStorage: PreHookHandlerType<Item> = async (item, actor) => {
     // enabled only on given item type
     if (item.type !== itemType) return;
 
@@ -99,7 +103,7 @@ const plugin: FastifyPluginAsync<GraaspS3FileItemOptions> = async (fastify, opti
     const { extra: memberExtra } = actor as Member<MemberExtra>;
     let currentStorage = getMemberStorageFromExtra(memberExtra);
 
-    if (currentStorage + size > DEFAULT_MAX_STORAGE) {
+    if (currentStorage + size > maxMemberStorage) {
       throw new StorageExceeded();
     }
   };
@@ -107,35 +111,32 @@ const plugin: FastifyPluginAsync<GraaspS3FileItemOptions> = async (fastify, opti
   // register pre create handler to prevent file creation when allowed storage is exceeded
   // register pre create handler to increase member storage total size
   const createItemTaskName = taskManager.getCreateTaskName();
-  runner.setTaskPreHookHandler<Item<UnknownExtra>>(createItemTaskName, checkRemainingStorage);
-  runner.setTaskPostHookHandler<Item<UnknownExtra>>(createItemTaskName, increaseStorage);
+  runner.setTaskPreHookHandler(createItemTaskName, checkRemainingStorage);
+  runner.setTaskPostHookHandler(createItemTaskName, increaseStorage);
 
   // register post update handler to increase member storage total size
   // this case happens for s3 when the file size is available after upload only
   // in this case the user might exceed its given storage but will be prevented to upload on item create
   const updateItemTaskName = taskManager.getUpdateTaskName();
-  runner.setTaskPostHookHandler<Item<UnknownExtra>>(
-    updateItemTaskName,
-    async (item, actor, handlers, data) => {
-      // trigger this hook only if the size is shoved into the item
+  runner.setTaskPostHookHandler<Item>(updateItemTaskName, async (item, actor, handlers, data) => {
+    // trigger this hook only if the size is shoved into the item
 
-      const itemData = data as Partial<Item<UnknownExtra>>;
-      const size = getFileSize(itemData);
-      if (!size) return;
+    const itemData = data as Partial<Item>;
+    const size = getFileSize(itemData);
+    if (!size) return;
 
-      await increaseStorage({ ...item, ...itemData }, actor, handlers, data);
-    }
-  );
+    await increaseStorage({ ...item, ...itemData }, actor, handlers, data);
+  });
 
   // register pre copy handler to prevent file creation when allowed storage is exceeded
   // register post copy handler to increase member storage total size
   const copyItemTaskName = taskManager.getCopyTaskName();
-  runner.setTaskPreHookHandler<Item<UnknownExtra>>(copyItemTaskName, checkRemainingStorage);
-  runner.setTaskPostHookHandler<Item<UnknownExtra>>(copyItemTaskName, increaseStorage);
+  runner.setTaskPreHookHandler(copyItemTaskName, checkRemainingStorage);
+  runner.setTaskPostHookHandler(copyItemTaskName, increaseStorage);
 
   // register post delete handler to decrease member storage total size
   const deleteItemTaskName = taskManager.getDeleteTaskName();
-  runner.setTaskPostHookHandler<Item<UnknownExtra>>(deleteItemTaskName, decreaseStorage);
+  runner.setTaskPostHookHandler(deleteItemTaskName, decreaseStorage);
 };
 
 export default plugin;
