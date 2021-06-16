@@ -22,5 +22,8 @@
     "eslint": "^7.13.0",
     "fastify": "^3.8.0",
     "typescript": "^4.0.5"
+  },
+  "dependencies": {
+    "slonik": "^23.8.0"
   }
 }
