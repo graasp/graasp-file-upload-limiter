@@ -42,7 +42,7 @@ const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastif
   const getFileSize = (extra: UnknownExtra): number => {
     const properties = sizePath.split(".");
     const sizeField = properties.reduce(
-      (prev: string | undefined, curr: string) => prev?.[curr],
+      (prev: UnknownExtra | { [key: string]: any } | undefined, curr: string) => prev?.[curr],
       extra
     );
 
