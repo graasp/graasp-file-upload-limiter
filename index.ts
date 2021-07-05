@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from "fastify";
 import { sql } from "slonik";
-import { Item, Member, PreHookHandlerType } from "graasp";
+import { DatabaseTransactionHandler, Item, Member, PreHookHandlerType, UnknownExtra } from "graasp";
 
 const DEFAULT_MAX_STORAGE = 1024 * 1024 * 100; // 100MB;
 
@@ -39,18 +39,18 @@ const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastif
     throw new Error("graasp-file-upload-limiter: missing plugin options");
   }
 
-  const getFileSize = (extra): number => {
+  const getFileSize = (extra: UnknownExtra): number => {
     const properties = sizePath.split(".");
     const sizeField = properties.reduce((prev, curr) => prev?.[curr], extra);
 
     if (Number.isInteger(sizeField)) {
-      return sizeField;
+      return sizeField as number;
     }
 
     throw new Error("sizePath does not lead to a size number");
   };
 
-  const getMemberStorage = (id: string, handler): Promise<number> => {
+  const getMemberStorage = (id: string, handler: DatabaseTransactionHandler): Promise<number> => {
     // todo: fetch total storage from Redis
 
     // select all file extra for given member
@@ -66,7 +66,7 @@ const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastif
             WHERE item.type =${itemType} AND item.creator = ${id}`
         )
         // sum up
-        .then(({ rows }) => rows[0].sum)
+        .then(({ rows }) => rows[0].sum as number)
     );
   };
 
