@@ -41,7 +41,10 @@ const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastif
 
   const getFileSize = (extra: UnknownExtra): number => {
     const properties = sizePath.split(".");
-    const sizeField = properties.reduce((prev, curr) => prev?.[curr], extra);
+    const sizeField = properties.reduce(
+      (prev: string | undefined, curr: string) => prev?.[curr],
+      extra
+    );
 
     if (Number.isInteger(sizeField)) {
       return parseInt(sizeField as string);
@@ -78,6 +81,10 @@ const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastif
   const checkRemainingStorage: PreHookHandlerType<Item> = async (item, actor, { handler }) => {
     // enabled only on given item type and if extra is defined
     if (item.type !== itemType || !item.extra) return;
+
+    if (!handler) {
+      throw new Error("handler is not defined");
+    }
 
     const size = getFileSize(item.extra);
 
