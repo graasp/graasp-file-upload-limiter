@@ -87,7 +87,7 @@ const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastif
     try {
       size = getFileSize(item.extra);
     } catch (e) {
-      // s3 file size might not contain file size at creation
+      // s3 file item might not contain file size at creation
       if (!(e instanceof FileSizeNotFound)) {
         throw e;
       }
