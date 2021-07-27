@@ -28,6 +28,13 @@ class StorageExceeded extends Error {
   code = 507;
 }
 
+class FileSizeNotFound extends Error {
+  message = "The file size is not correctly defined";
+  name = "FileSizeNotFound";
+  origin = "plugin";
+  code = 500;
+}
+
 const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastify, options) => {
   const {
     items: { taskManager },
@@ -47,7 +54,7 @@ const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastif
       return sizeField;
     }
 
-    throw new Error("sizePath does not lead to a size number");
+    throw new FileSizeNotFound();
   };
 
   const getMemberStorage = (id: string, handler): Promise<number> => {
@@ -76,8 +83,15 @@ const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastif
     // enabled only on given item type
     if (item.type !== itemType) return;
 
-    const size = getFileSize(item.extra);
-
+    let size = 0;
+    try {
+      size = getFileSize(item.extra);
+    } catch (e) {
+      // s3 file item might not contain file size at creation
+      if (!(e instanceof FileSizeNotFound)) {
+        throw e;
+      }
+    }
     const { id: memberId } = actor as Member<MemberExtra>;
     const currentStorage = await getMemberStorage(memberId, handler);
 
