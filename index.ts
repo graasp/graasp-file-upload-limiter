@@ -73,7 +73,7 @@ const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastif
             WHERE item.type =${itemType} AND item.creator = ${id}`
         )
         // sum up
-        .then(({ rows }) => rows[0].sum)
+        .then(({ rows }) => parseInt(rows[0].sum, 10))
     );
   };
 
