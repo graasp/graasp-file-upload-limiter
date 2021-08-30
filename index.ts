@@ -3,6 +3,7 @@ import { sql } from "slonik";
 import { Item, Member, PreHookHandlerType } from "graasp";
 
 const DEFAULT_MAX_STORAGE = 1024 * 1024 * 100; // 100MB;
+const DECIMAL = 10;
 
 interface GraaspFileUploadLimiterOptions {
   /** Item type to target (ex: 'file', 's3File') */
@@ -73,7 +74,7 @@ const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastif
             WHERE item.type =${itemType} AND item.creator = ${id}`
         )
         // sum up
-        .then(({ rows }) => parseInt(rows[0].sum, 10))
+        .then(({ rows }) => parseInt(rows[0].sum, DECIMAL))
     );
   };
 
