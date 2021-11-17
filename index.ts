@@ -1,11 +1,11 @@
-import { FastifyPluginAsync } from "fastify";
-import { sql } from "slonik";
-import { Item, Member, PreHookHandlerType } from "graasp";
+import { FastifyPluginAsync } from 'fastify';
+import { sql } from 'slonik';
+import { Item, Member, PreHookHandlerType } from 'graasp';
 
 const DEFAULT_MAX_STORAGE = 1024 * 1024 * 100; // 100MB;
 const DECIMAL = 10;
 
-interface GraaspFileUploadLimiterOptions {
+export interface GraaspFileUploadLimiterOptions {
   /** Item type to target (ex: 'file', 's3File') */
   type: string;
   /** Chain of property names to the file size (ex: 's3File.size')
@@ -23,16 +23,16 @@ type MemberExtra = {
 };
 
 class StorageExceeded extends Error {
-  message = "The allowed storage is full";
-  name = "StorageExceededError";
-  origin = "plugin";
+  message = 'The allowed storage is full';
+  name = 'StorageExceededError';
+  origin = 'plugin';
   code = 507;
 }
 
 class FileSizeNotFound extends Error {
-  message = "The file size is not correctly defined";
-  name = "FileSizeNotFound";
-  origin = "plugin";
+  message = 'The file size is not correctly defined';
+  name = 'FileSizeNotFound';
+  origin = 'plugin';
   code = 500;
 }
 
@@ -44,11 +44,11 @@ const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastif
   const { type: itemType, sizePath, maxMemberStorage = DEFAULT_MAX_STORAGE } = options;
 
   if (!itemType || !sizePath) {
-    throw new Error("graasp-file-upload-limiter: missing plugin options");
+    throw new Error('graasp-file-upload-limiter: missing plugin options');
   }
 
   const getFileSize = (extra): number => {
-    const properties = sizePath.split(".");
+    const properties = sizePath.split('.');
     const sizeField = properties.reduce((prev, curr) => prev?.[curr], extra);
 
     if (Number.isInteger(sizeField)) {
@@ -62,7 +62,7 @@ const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastif
     // todo: fetch total storage from Redis
 
     // select all file extra for given member
-    const properties = sizePath.split(".");
+    const properties = sizePath.split('.');
     const propertiesPath = sql.join(properties, sql`->`);
     return (
       handler
