@@ -71,7 +71,7 @@ const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastif
             SELECT 
             SUM((extra->${propertiesPath})::int)
             FROM item 
-            WHERE item.type =${itemType} AND item.creator = ${id}`
+            WHERE item.type =${itemType} AND item.creator = ${id}`,
         )
         // sum up
         .then(({ rows }) => parseInt(rows[0].sum, DECIMAL))
