@@ -2,7 +2,7 @@ import { FastifyPluginAsync } from 'fastify';
 import { sql } from 'slonik';
 import { Item, Member, PreHookHandlerType } from 'graasp';
 
-const DEFAULT_MAX_STORAGE = 1024 * 1024 * 100; // 100MB;
+const DEFAULT_MAX_STORAGE = 1024 * 1024 * 1024; // 1GB;
 const DECIMAL = 10;
 
 export interface GraaspFileUploadLimiterOptions {
