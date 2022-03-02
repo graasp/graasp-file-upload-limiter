@@ -4,6 +4,7 @@ import { FileUploadLimiterDbService } from './db-service';
 import { DEFAULT_MAX_STORAGE } from './utils/constants';
 import { FileSizeNotFound, StorageExceeded } from './utils/errors';
 import { GraaspFileUploadLimiterOptions } from './utils/types';
+import { getFileSize } from './utils/utils';
 
 const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastify, options) => {
   const {
@@ -18,17 +19,6 @@ const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastif
 
   const dbService = new FileUploadLimiterDbService(sizePath);
 
-  const getFileSize = (extra): number => {
-    const properties = sizePath.split('.');
-    const sizeField = properties.reduce((prev, curr) => prev?.[curr], extra);
-
-    if (Number.isInteger(sizeField)) {
-      return sizeField;
-    }
-
-    throw new FileSizeNotFound();
-  };
-
   // check the user has enough storage to create a new item given its size
   // get the complete storage
   const checkRemainingStorage: PreHookHandlerType<Item> = async (item, actor, { handler }) => {
@@ -37,7 +27,7 @@ const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastif
 
     let size = 0;
     try {
-      size = getFileSize(item.extra);
+      size = getFileSize(item.extra, sizePath);
     } catch (e) {
       // s3 file item might not contain file size at creation
       if (!(e instanceof FileSizeNotFound)) {
@@ -53,7 +43,7 @@ const plugin: FastifyPluginAsync<GraaspFileUploadLimiterOptions> = async (fastif
     }
   };
 
-  // prehook on create if handled in plugin-file-item
+  // prehook on create handled in plugin-file-item
 
   // register pre copy handler to prevent file creation when allowed storage is exceeded
   const copyItemTaskName = iTM.getCopyTaskName();
