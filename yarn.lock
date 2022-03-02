@@ -32,6 +32,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.12.0":
+  version: 7.17.2
+  resolution: "@babel/runtime@npm:7.17.2"
+  dependencies:
+    regenerator-runtime: ^0.13.4
+  checksum: a48702d271ecc59c09c397856407afa29ff980ab537b3da58eeee1aeaa0f545402d340a1680c9af58aec94dfdcbccfb6abb211991b74686a86d03d3f6956cacd
+  languageName: node
+  linkType: hard
+
 "@commitlint/cli@npm:16.0.1":
   version: 16.0.1
   resolution: "@commitlint/cli@npm:16.0.1"
@@ -261,6 +270,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graasp/translations@github:graasp/graasp-translations":
+  version: 0.1.0
+  resolution: "@graasp/translations@https://github.com/graasp/graasp-translations.git#commit=452c17c0b4b5a5e216b8d647a9f821071b179213"
+  dependencies:
+    i18next: 21.6.11
+  checksum: b375f4ea5982845d74e354003017a872dc21c012da42c58f05d3ef4e086335788e9335a0c59c4954a6f489e0f89d97b17e10916e653eb6edf6f78f18fa89e878
+  languageName: node
+  linkType: hard
+
 "@humanwhocodes/config-array@npm:^0.9.2":
   version: 0.9.2
   resolution: "@humanwhocodes/config-array@npm:0.9.2"
@@ -353,8 +371,8 @@ __metadata:
 
 "@types/graasp@github:graasp/graasp-types":
   version: 0.1.0
-  resolution: "@types/graasp@https://github.com/graasp/graasp-types.git#commit=803e87c1dc314eb15369a070e3ab96853b9c5d90"
-  checksum: 4518ff894fda7b638ea2f175841ec864d7e0c63257648e4dd88ad191d24b85fdde42f2e0225dcf320bb8007a984ff1ea2c8c153a81e13c530185a609a004d8f8
+  resolution: "@types/graasp@https://github.com/graasp/graasp-types.git#commit=f928605803d55ce7b51d87f9c915d2390ff029be"
+  checksum: 8fc2a6239b030bb4bed1d582525b474eb58597bd2da6a76abc026d23c4a03925983e50cb5da8bf5e31869d0009f154f6a6c6ee6df31a95a8e5722931d0f0cca4
   languageName: node
   linkType: hard
 
@@ -1649,6 +1667,7 @@ __metadata:
   dependencies:
     "@commitlint/cli": 16.0.1
     "@commitlint/config-conventional": 16.0.0
+    "@graasp/translations": "github:graasp/graasp-translations"
     "@types/eslint": ^8.2.2
     "@types/graasp": "github:graasp/graasp-types"
     "@types/node": ^17.0.8
@@ -1657,6 +1676,7 @@ __metadata:
     eslint: ^8.6.0
     eslint-config-prettier: ^8.3.0
     fastify: ^3.25.3
+    http-status-codes: 2.2.0
     husky: 7.0.4
     prettier: 2.5.1
     slonik: ^27.1.0
@@ -1717,6 +1737,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"http-status-codes@npm:2.2.0":
+  version: 2.2.0
+  resolution: "http-status-codes@npm:2.2.0"
+  checksum: 31e1d730856210445da0907d9b484629e69e4fe92ac032478a7aa4d89e5b215e2b4e75d7ebce40d0537b6850bd281b2f65c7cc36cc2677e5de056d6cea1045ce
+  languageName: node
+  linkType: hard
+
 "human-signals@npm:^2.1.0":
   version: 2.1.0
   resolution: "human-signals@npm:2.1.0"
@@ -1740,6 +1767,15 @@ __metadata:
     uuid: ^8.3.2
     uuid-parse: ^1.1.0
   checksum: 311b286c35d2d9b6807e13c47afe151d90586c6a57076b5a69125f1945a953b6ca3afa9bcffa57f19f1afd989181b8ed33cedd1ce25dec1587198d78c1d91ed2
+  languageName: node
+  linkType: hard
+
+"i18next@npm:21.6.11":
+  version: 21.6.11
+  resolution: "i18next@npm:21.6.11"
+  dependencies:
+    "@babel/runtime": ^7.12.0
+  checksum: 42716a7519d6066a8c9400639ab80fba0b568ae02205b1155ec9c4e627704bb2181dd182ff5eb0c91f6c67c8038ddd0754214e1932de5699d488c21ffd617c5e
   languageName: node
   linkType: hard
 
@@ -2693,6 +2729,13 @@ __metadata:
     indent-string: ^4.0.0
     strip-indent: ^3.0.0
   checksum: fa1ef20404a2d399235e83cc80bd55a956642e37dd197b4b612ba7327bf87fa32745aeb4a1634b2bab25467164ab4ed9c15be2c307923dd08b0fe7c52431ae6b
+  languageName: node
+  linkType: hard
+
+"regenerator-runtime@npm:^0.13.4":
+  version: 0.13.9
+  resolution: "regenerator-runtime@npm:0.13.9"
+  checksum: 65ed455fe5afd799e2897baf691ca21c2772e1a969d19bb0c4695757c2d96249eb74ee3553ea34a91062b2a676beedf630b4c1551cc6299afb937be1426ec55e
   languageName: node
   linkType: hard
 
