@@ -270,12 +270,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graasp/translations@github:graasp/graasp-translations#1/init":
+"@graasp/translations@github:graasp/graasp-translations":
   version: 0.1.0
-  resolution: "@graasp/translations@https://github.com/graasp/graasp-translations.git#commit=5b8fe04d173263c37f8367f631350e08865f411e"
+  resolution: "@graasp/translations@https://github.com/graasp/graasp-translations.git#commit=452c17c0b4b5a5e216b8d647a9f821071b179213"
   dependencies:
     i18next: 21.6.11
-  checksum: 670ac2542a3a03fe6f6f44504be299ef93d5cd2608adcfae6173499a14ebd40f5775fff13bf3ef8af6bf670fe3379720d09380e669c4d65c390b42f4f67a70b4
+  checksum: b375f4ea5982845d74e354003017a872dc21c012da42c58f05d3ef4e086335788e9335a0c59c4954a6f489e0f89d97b17e10916e653eb6edf6f78f18fa89e878
   languageName: node
   linkType: hard
 
@@ -1667,7 +1667,7 @@ __metadata:
   dependencies:
     "@commitlint/cli": 16.0.1
     "@commitlint/config-conventional": 16.0.0
-    "@graasp/translations": "github:graasp/graasp-translations#1/init"
+    "@graasp/translations": "github:graasp/graasp-translations"
     "@types/eslint": ^8.2.2
     "@types/graasp": "github:graasp/graasp-types"
     "@types/node": ^17.0.8
