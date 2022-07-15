@@ -1,5 +1,7 @@
-import { DatabaseTransactionHandler } from 'graasp';
 import { sql } from 'slonik';
+
+import { DatabaseTransactionHandler } from '@graasp/sdk';
+
 import { DECIMAL } from './utils/constants';
 
 export class FileUploadLimiterDbService {
@@ -28,7 +30,7 @@ export class FileUploadLimiterDbService {
           WHERE item.type = ${itemType} AND item.creator = ${memberId}`,
         )
         // sum up
-        .then(({ rows }) => parseInt(rows[0].sum, DECIMAL))
+        .then(({ rows }) => parseInt((rows[0] as { sum: string }).sum, DECIMAL))
     );
   }
 }

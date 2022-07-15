@@ -1,4 +1,5 @@
-import { Actor, DatabaseTransactionHandler, Member } from 'graasp';
+import { Actor, DatabaseTransactionHandler, Member, TaskStatus } from '@graasp/sdk';
+
 import { FileUploadLimiterDbService as DbService } from '../db-service';
 import { BaseTask } from './base-task';
 
@@ -21,7 +22,7 @@ export class GetMemberStorageTask extends BaseTask<Actor, number> {
   }
 
   async run(handler: DatabaseTransactionHandler): Promise<void> {
-    this.status = 'RUNNING';
+    this.status = TaskStatus.RUNNING;
 
     // todo: fetch total storage from Redis
     const { memberId, itemType } = this.input;
@@ -29,6 +30,6 @@ export class GetMemberStorageTask extends BaseTask<Actor, number> {
     const storage = await this.dS.getMemberStorage({ memberId, itemType }, handler);
 
     this._result = storage;
-    this.status = 'OK';
+    this.status = TaskStatus.OK;
   }
 }

@@ -1,5 +1,7 @@
 import { FastifyPluginAsync } from 'fastify';
-import { Item, Member, PreHookHandlerType } from 'graasp';
+
+import { Item, Member, PreHookHandlerType } from '@graasp/sdk';
+
 import { FileUploadLimiterDbService } from './db-service';
 import { DEFAULT_MAX_STORAGE } from './utils/constants';
 import { FileSizeNotFound, StorageExceeded } from './utils/errors';

@@ -1,4 +1,5 @@
-import { Member } from 'graasp';
+import { Member } from '@graasp/sdk';
+
 import { FileUploadLimiterDbService } from './db-service';
 import {
   CheckMemberStorageTask,

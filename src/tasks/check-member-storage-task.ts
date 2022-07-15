@@ -1,4 +1,5 @@
-import { Actor, DatabaseTransactionHandler, Member } from 'graasp';
+import { Actor, DatabaseTransactionHandler, Member, TaskStatus } from '@graasp/sdk';
+
 import { FileUploadLimiterDbService } from '../db-service';
 import { DEFAULT_MAX_STORAGE } from '../utils/constants';
 import { StorageExceeded } from '../utils/errors';
@@ -28,7 +29,7 @@ export class CheckMemberStorageTask extends BaseTask<Actor, boolean> {
   }
 
   async run(handler: DatabaseTransactionHandler): Promise<void> {
-    this.status = 'RUNNING';
+    this.status = TaskStatus.RUNNING;
 
     // todo: fetch total storage from Redis
     const { memberId, itemType } = this.input;
@@ -42,6 +43,6 @@ export class CheckMemberStorageTask extends BaseTask<Actor, boolean> {
 
     // todo: check depending on member subscription
     this._result = storage < DEFAULT_MAX_STORAGE;
-    this.status = 'OK';
+    this.status = TaskStatus.OK;
   }
 }

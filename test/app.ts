@@ -1,6 +1,8 @@
 import fastify from 'fastify';
-import { ItemTaskManager } from 'graasp';
+
+import { ItemTaskManager } from '@graasp/sdk';
 import { TaskRunner } from 'graasp-test';
+
 import plugin from '../src/plugin';
 import { GraaspFileUploadLimiterOptions } from '../src/utils/types';
 
