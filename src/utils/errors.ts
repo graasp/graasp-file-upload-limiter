@@ -1,12 +1,13 @@
 import { StatusCodes } from 'http-status-codes';
 
-import { BaseGraaspError } from '@graasp/sdk';
+import { ErrorFactory } from '@graasp/sdk';
 import { FAILURE_MESSAGES } from '@graasp/translations';
 
 import { PLUGIN_NAME } from './constants';
 
-export class StorageExceeded extends BaseGraaspError {
-  origin = PLUGIN_NAME;
+const GraaspError = ErrorFactory(PLUGIN_NAME);
+
+export class StorageExceeded extends GraaspError {
   constructor(data?: unknown) {
     super(
       {
@@ -19,8 +20,7 @@ export class StorageExceeded extends BaseGraaspError {
   }
 }
 
-export class FileSizeNotFound extends BaseGraaspError {
-  origin = PLUGIN_NAME;
+export class FileSizeNotFound extends GraaspError {
   constructor(data?: unknown) {
     super(
       {
