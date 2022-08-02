@@ -22,7 +22,7 @@ export class FileUploadLimiterDbService {
     const propertiesPath = sql.join(properties, sql`->`);
     return (
       transactionHandler
-        .query(
+        .query<{ sum: string }>(
           sql`
           SELECT 
           SUM((extra->${propertiesPath})::int)
@@ -30,7 +30,7 @@ export class FileUploadLimiterDbService {
           WHERE item.type = ${itemType} AND item.creator = ${memberId}`,
         )
         // sum up
-        .then(({ rows }) => parseInt((rows[0] as { sum: string }).sum, DECIMAL))
+        .then(({ rows }) => parseInt(rows[0].sum, DECIMAL))
     );
   }
 }

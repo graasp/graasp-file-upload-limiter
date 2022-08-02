@@ -5,9 +5,9 @@ import { FAILURE_MESSAGES } from '@graasp/translations';
 
 import { PLUGIN_NAME } from './constants';
 
-const GraaspError = ErrorFactory(PLUGIN_NAME);
+const GraaspFileUploadLimiterError = ErrorFactory(PLUGIN_NAME);
 
-export class StorageExceeded extends GraaspError {
+export class StorageExceeded extends GraaspFileUploadLimiterError {
   constructor(data?: unknown) {
     super(
       {
@@ -20,7 +20,7 @@ export class StorageExceeded extends GraaspError {
   }
 }
 
-export class FileSizeNotFound extends GraaspError {
+export class FileSizeNotFound extends GraaspFileUploadLimiterError {
   constructor(data?: unknown) {
     super(
       {
