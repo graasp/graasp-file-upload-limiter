@@ -1,5 +1,5 @@
-// global
 import { FastifyLoggerInstance } from 'fastify';
+
 import {
   Actor,
   DatabaseTransactionHandler,
@@ -8,7 +8,7 @@ import {
   PreHookHandlerType,
   Task,
   TaskStatus,
-} from 'graasp';
+} from '@graasp/sdk';
 
 export abstract class BaseTask<A extends Actor, R> implements Task<A, R> {
   protected _result: R;
@@ -27,7 +27,7 @@ export abstract class BaseTask<A extends Actor, R> implements Task<A, R> {
 
   constructor(actor: A) {
     this.actor = actor;
-    this.status = 'NEW';
+    this.status = TaskStatus.NEW;
   }
 
   abstract get name(): string;

@@ -1,5 +1,7 @@
-import { DatabaseTransactionHandler } from 'graasp';
 import { sql } from 'slonik';
+
+import { DatabaseTransactionHandler } from '@graasp/sdk';
+
 import { DECIMAL } from './utils/constants';
 
 export class FileUploadLimiterDbService {
@@ -20,7 +22,7 @@ export class FileUploadLimiterDbService {
     const propertiesPath = sql.join(properties, sql`->`);
     return (
       transactionHandler
-        .query(
+        .query<{ sum: string }>(
           sql`
           SELECT 
           SUM((extra->${propertiesPath})::int)

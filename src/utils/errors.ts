@@ -1,24 +1,11 @@
-import { GraaspErrorDetails, GraaspError } from 'graasp';
 import { StatusCodes } from 'http-status-codes';
+
+import { ErrorFactory } from '@graasp/sdk';
 import { FAILURE_MESSAGES } from '@graasp/translations';
 
-export class GraaspFileUploadLimiterError implements GraaspError {
-  name: string;
-  code: string;
-  message: string;
-  statusCode?: number;
-  data?: unknown;
-  origin: 'plugin' | string;
+import { PLUGIN_NAME } from './constants';
 
-  constructor({ code, statusCode, message }: GraaspErrorDetails, data?: unknown) {
-    this.name = code;
-    this.code = code;
-    this.message = message;
-    this.statusCode = statusCode;
-    this.data = data;
-    this.origin = 'plugin';
-  }
-}
+const GraaspFileUploadLimiterError = ErrorFactory(PLUGIN_NAME);
 
 export class StorageExceeded extends GraaspFileUploadLimiterError {
   constructor(data?: unknown) {
